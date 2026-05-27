@@ -3,251 +3,475 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Age Ratio — Adding vs Multiplying</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Age Ratio — Why Adding Changes a Ratio</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f5f4f0;--surface:#fff;--surface2:#f0ede8;--border:#d8d4cc;
-  --text:#1a1814;--text2:#5a5650;--text3:#9a958e;
-  --blue:#2c5f9e;--red:#c0392b;--green:#1a7a4a;--orange:#e08020;
-  --font:'DM Sans',-apple-system,sans-serif;--mono:'DM Mono',monospace;
+  --cream:#fdf8f0;--cream2:#f7f0e4;--cream3:#eddeca;
+  --amber:#c4750a;--amber-dim:rgba(196,117,10,.12);--amber-glow:rgba(196,117,10,.3);
+  --sepia:#8a6520;--sepia2:#6b4e18;
+  --red:#c0362a;--red-dim:rgba(192,54,42,.1);
+  --green:#2a7040;--green-dim:rgba(42,112,64,.1);
+  --blue:#204a88;--blue-dim:rgba(32,74,136,.1);
+  --ink:#1a150c;--ink2:#3a2e1e;--ink3:#7a6848;
+  --rule:#c8b890;--rule2:#ddd0b0;
+  --serif:'Instrument Serif',Georgia,serif;--mono:'DM Mono',monospace;
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);
-  min-height:100vh;-webkit-font-smoothing:antialiased;padding:24px 16px}
-.app{max-width:920px;margin:0 auto}
-.head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
-.head-ic{width:42px;height:42px;border-radius:10px;background:var(--surface2);
-  border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-weight:600;color:var(--text2);font-size:16px;flex-shrink:0}
-.lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:3px}
-.title{font-size:22px;font-weight:700;line-height:1.2}
-.card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px}
-.intro{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:18px}
-.intro strong{color:var(--text)}
+html,body{background:var(--cream);color:var(--ink);font-family:var(--serif);min-height:100%;-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column}
 
-/* Setup sliders */
-.setup{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px}
-@media(max-width:600px){.setup{grid-template-columns:1fr}}
-.sl-block{padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px}
-.sl-block .sr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.sl-block label{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text)}
-.sl-block .sv{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--blue);margin-left:auto}
-.sl-block input[type=range]{width:100%;accent-color:var(--blue);height:5px}
+/* Aged paper texture */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(ellipse at 10% 20%,rgba(196,117,10,.04) 0%,transparent 60%),
+    radial-gradient(ellipse at 90% 80%,rgba(139,80,24,.03) 0%,transparent 60%),
+    repeating-linear-gradient(0deg,transparent,transparent 24px,rgba(0,0,0,.03) 24px,rgba(0,0,0,.03) 25px)}
 
-/* Timeline */
-.timeline-wrap{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;
-  padding:20px;overflow-x:auto;margin-bottom:14px}
-.timeline-wrap svg{display:block;max-width:100%}
+/* HEADER */
+.top{position:relative;z-index:10;background:var(--amber);color:#fff;
+  padding:12px 24px;display:flex;align-items:center;gap:16px;flex-shrink:0}
+.top-badge{font-family:var(--mono);font-size:10px;font-weight:700;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  border-radius:3px;padding:3px 8px;letter-spacing:.1em}
+.top-title{font-size:20px;flex:1}
+.top-title em{font-style:italic}
 
-/* Key moment callout */
-.callout{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
-.callout-cell{padding:12px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;
-  text-align:center;min-width:130px}
-.callout-cell .cc-lbl{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.callout-cell .cc-ages{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text)}
-.callout-cell .cc-ratio{font-family:var(--mono);font-size:18px;font-weight:700;margin-top:3px}
-.callout-cell .cc-simple{font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:2px}
-.callout-cell.now{border-color:var(--blue);background:#2c5f9e08}
-.callout-cell.now .cc-ratio{color:var(--blue)}
+/* MAIN — 3 column */
+.main{position:relative;z-index:5;display:grid;grid-template-columns:260px 1fr 280px;
+  min-height:calc(100vh - 51px)}
 
-/* The big insight box */
-.insight{background:#fff8f0;border:1px solid #f0d8c0;border-left:3px solid var(--orange);
-  border-radius:0 8px 8px 0;padding:12px 15px;font-size:13px;color:#6b4400;line-height:1.65;margin-top:14px}
-.insight strong{color:#4a2e00}
+/* LEFT: Story setup */
+.left{background:var(--cream2);border-right:2px solid var(--amber);padding:20px 16px;
+  display:flex;flex-direction:column;gap:18px;overflow-y:auto}
+.panel-lbl{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink3);padding-bottom:6px;
+  border-bottom:1px solid var(--rule2);margin-bottom:2px}
 
-/* Add vs multiply side-by-side */
-.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
-@media(max-width:580px){.compare{grid-template-columns:1fr}}
-.compare-cell{padding:14px 16px;border-radius:10px;border:1.5px solid}
-.compare-cell.good{background:#f0f7f3;border-color:var(--green)}
-.compare-cell.bad{background:#fbf2f0;border-color:var(--red)}
-.compare-cell .cmp-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.compare-cell.good .cmp-title{color:var(--green)}
-.compare-cell.bad .cmp-title{color:var(--red)}
-.compare-cell .cmp-body{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.8}
-.compare-cell .cmp-verdict{margin-top:8px;font-size:12px;font-weight:600}
-.compare-cell.good .cmp-verdict{color:var(--green)}
-.compare-cell.bad .cmp-verdict{color:var(--red)}
+/* Character inputs */
+.char-card{padding:12px 14px;background:var(--cream);border:1.5px solid var(--rule);border-radius:8px;display:flex;flex-direction:column;gap:6px}
+.cc-header{display:flex;align-items:center;gap:10px}
+.cc-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid}
+.cc-name{font-size:16px;font-weight:400;font-style:italic}
+.cc-row{display:flex;align-items:center;gap:8px}
+.cc-lbl{font-family:var(--mono);font-size:11px;color:var(--ink3);min-width:70px}
+.cc-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--amber);margin-left:auto;min-width:32px;text-align:right}
+input[type=range]{flex:1;accent-color:var(--amber);height:4px;cursor:pointer}
+
+/* Year slider */
+.year-control{padding:16px;background:var(--amber-dim);border:1.5px solid var(--amber);border-radius:8px}
+.yc-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.yc-lbl{font-size:13px;color:var(--ink2)}
+.yc-year{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--amber)}
+.yc-hint{font-size:11px;color:var(--ink3);margin-top:6px;font-style:italic}
+
+/* Insight */
+.insight{padding:12px;background:var(--amber-dim);border:1.5px solid var(--amber);
+  border-radius:0 7px 7px 0;border-left:3px solid var(--amber);
+  font-size:12px;color:var(--ink2);line-height:1.7}
+.insight strong{color:var(--amber)}
+
+/* CENTER: The story timeline */
+.center{padding:24px;display:flex;flex-direction:column;gap:20px;overflow-y:auto}
+
+/* Snapshot cards */
+.snapshots{display:flex;flex-direction:column;gap:0}
+.snap{padding:20px;border-left:4px solid var(--rule);margin-left:20px;position:relative}
+.snap::before{content:'';position:absolute;left:-8px;top:24px;width:12px;height:12px;
+  border-radius:50%;background:var(--cream);border:3px solid var(--rule)}
+.snap.now::before{background:var(--amber);border-color:var(--amber)}
+.snap.now{border-left-color:var(--amber);background:var(--amber-dim);border-radius:0 8px 8px 0;margin-left:20px}
+
+.snap-year{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.snap-now-badge{display:inline-block;background:var(--amber);color:#fff;
+  font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:3px;margin-left:6px;letter-spacing:.06em}
+
+.snap-people{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.person{display:flex;flex-direction:column;align-items:center;gap:6px}
+.person-avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:20px;border:2px solid;transition:all .3s}
+.person-name{font-size:12px;color:var(--ink3);font-style:italic}
+.person-age{font-family:var(--mono);font-size:18px;font-weight:700;transition:all .3s}
+
+.snap-arrow{font-size:24px;color:var(--rule);align-self:center}
+
+.snap-ratio{padding:10px 16px;background:var(--cream);border:1.5px solid var(--rule);
+  border-radius:6px;text-align:center;min-width:120px}
+.sr-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink3);font-family:var(--mono);margin-bottom:4px}
+.sr-fraction{display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mono)}
+.sr-num{font-size:28px;font-weight:700;border-bottom:2px solid;padding-bottom:1px;text-align:center}
+.sr-den{font-size:28px;font-weight:700;text-align:center}
+.sr-colon{font-size:22px;color:var(--ink3);margin:0 4px}
+.sr-simplified{font-size:13px;color:var(--ink3);margin-top:4px;font-family:var(--mono)}
+
+.snap-gap-note{font-size:12px;color:var(--ink3);font-style:italic;align-self:center}
+
+/* Gap invariant bar */
+.gap-bar{padding:14px 18px;background:var(--cream2);border:1.5px solid var(--rule);
+  border-radius:8px;display:flex;align-items:center;gap:12px}
+.gb-icon{font-size:28px}
+.gb-text{font-size:14px;color:var(--ink2);line-height:1.5;flex:1}
+.gb-val{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--amber);flex-shrink:0}
+
+/* RIGHT: The big lesson */
+.right{border-left:2px solid var(--amber);background:var(--cream2);padding:20px 16px;
+  display:flex;flex-direction:column;gap:18px;overflow-y:auto}
+
+/* Add vs Multiply demo */
+.compare-block{display:flex;flex-direction:column;gap:8px}
+.compare-title{font-size:16px;font-weight:400;margin-bottom:4px}
+.compare-sub{font-size:12px;color:var(--ink3);font-style:italic;margin-bottom:8px}
+
+.op-demo{padding:14px;border-radius:8px;border:1.5px solid}
+.op-demo.op-bad{background:var(--red-dim);border-color:var(--red)}
+.op-demo.op-good{background:var(--green-dim);border-color:var(--green)}
+.op-title{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:8px}
+.op-demo.op-bad .op-title{color:var(--red)}
+.op-demo.op-good .op-title{color:var(--green)}
+.op-rows{display:flex;flex-direction:column;gap:5px}
+.op-row{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px}
+.or-input{color:var(--ink2)}
+.or-arrow{color:var(--ink3)}
+.or-result{font-weight:700}
+.op-verdict{margin-top:8px;font-size:12px;font-weight:700;font-family:var(--mono)}
+.op-demo.op-bad .op-verdict{color:var(--red)}
+.op-demo.op-good .op-verdict{color:var(--green)}
+
+/* The principle */
+.principle{padding:16px;background:var(--cream);border:2px solid var(--amber);border-radius:8px;text-align:center}
+.pr-title{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+.pr-statement{font-size:16px;color:var(--ink);line-height:1.6}
+.pr-statement strong{color:var(--amber)}
+.pr-example{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-top:10px;line-height:1.7}
+
+/* Ratio drift chart */
+.drift-chart{padding:14px;background:var(--cream);border:1.5px solid var(--rule);border-radius:8px}
+.dc-title{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+
+/* Mobile */
+@media(max-width:1000px){
+  .main{grid-template-columns:1fr;overflow:visible}
+  .left,.right{border-right:none;border-left:none;border-bottom:2px solid var(--amber)}
+  .center{padding:16px}
+}
+@media(max-width:480px){
+  .snap-people{gap:10px}
+  .person-avatar{font-size:16px}
+}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="head">
-    <div class="head-ic">7.3</div>
+
+<div class="top">
+  <div class="top-badge">CH 7.3</div>
+  <div class="top-title">Age Ratio — <em>Adding Shifts It</em></div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT: Setup -->
+  <div class="left">
     <div>
-      <div class="lbl">Chapter 7 · Section 7.3 & 7.4</div>
-      <div class="title">Age Ratio — Adding Shifts It</div>
+      <div class="panel-lbl">The two people</div>
+      <div class="char-card">
+        <div class="cc-header">
+          <div class="cc-avatar" style="background:rgba(32,74,136,.12);border-color:var(--blue);font-size:20px">🧒</div>
+          <div class="cc-name">Person A</div>
+        </div>
+        <div class="cc-row">
+          <span class="cc-lbl">Age now</span>
+          <input type="range" id="a0" min="1" max="25" value="3">
+          <span class="cc-val" id="a0v">3</span>
+        </div>
+      </div>
+      <div class="char-card" style="margin-top:8px">
+        <div class="cc-header">
+          <div class="cc-avatar" style="background:rgba(196,117,10,.12);border-color:var(--amber);font-size:20px">👩</div>
+          <div class="cc-name">Person B</div>
+        </div>
+        <div class="cc-row">
+          <span class="cc-lbl">Age now</span>
+          <input type="range" id="b0" min="2" max="80" value="30">
+          <span class="cc-val" id="b0v">30</span>
+        </div>
+      </div>
     </div>
+
+    <div class="year-control">
+      <div class="yc-header">
+        <span class="yc-lbl">Jump to year</span>
+        <span class="yc-year" id="year-val">+0</span>
+      </div>
+      <input type="range" id="years" min="0" max="50" value="0" style="width:100%;accent-color:var(--amber);height:5px">
+      <div class="yc-hint">Drag to travel through time →</div>
+    </div>
+
+    <div class="insight" id="insight-left"></div>
   </div>
 
-  <div class="card">
-    <p class="intro">
-      When Neelima was 3 her mother was 30 — ratio 1:10. Nine years later: 12 and 39 — ratio 4:13. The <strong>age gap stays constant</strong>, but the ratio changes every year. Adding the same number to both terms of a ratio is different from multiplying — only multiplication preserves proportionality. Drag the timeline to watch the ratio drift.
-    </p>
+  <!-- CENTER: Story -->
+  <div class="center">
+    <div class="gap-bar">
+      <div class="gb-icon">⏰</div>
+      <div class="gb-text">The <strong>age gap</strong> between them<br>is <em>fixed forever</em>:</div>
+      <div class="gb-val" id="gap-val">27</div>
+    </div>
 
-    <div class="setup">
-      <div class="sl-block">
-        <div class="sr"><label>Person A (now)</label><span class="sv" id="a0-val">3</span></div>
-        <input type="range" id="a0" min="1" max="30" value="3">
+    <div class="snapshots" id="snapshots"></div>
+
+    <!-- The NOW snapshot shown separately -->
+    <div id="now-snapshot"></div>
+  </div>
+
+  <!-- RIGHT: The lesson -->
+  <div class="right">
+    <div class="compare-block">
+      <div class="compare-title">The key comparison</div>
+      <div class="compare-sub">Same starting ratio. Two operations. Very different results.</div>
+
+      <div class="op-demo op-bad">
+        <div class="op-title">❌ Adding the same number</div>
+        <div class="op-rows" id="add-rows"></div>
+        <div class="op-verdict" id="add-verdict"></div>
       </div>
-      <div class="sl-block">
-        <div class="sr"><label>Person B (now)</label><span class="sv" id="b0-val">30</span></div>
-        <input type="range" id="b0" min="2" max="80" value="30">
-      </div>
-      <div class="sl-block">
-        <div class="sr"><label>Years to show</label><span class="sv" id="span-val">40</span></div>
-        <input type="range" id="span" min="10" max="60" value="40">
+
+      <div class="op-demo op-good">
+        <div class="op-title">✓ Multiplying both terms</div>
+        <div class="op-rows" id="mul-rows"></div>
+        <div class="op-verdict" id="mul-verdict"></div>
       </div>
     </div>
 
-    <div class="timeline-wrap" id="timeline"></div>
+    <div class="principle">
+      <div class="pr-title">The principle</div>
+      <div class="pr-statement"><strong>Ratios scale by multiplication,<br>not addition.</strong><br><br>The ratio a:b stays the same only when you multiply both a and b by the same number k.</div>
+      <div class="pr-example" id="principle-example"></div>
+    </div>
 
-    <div class="callout" id="callout"></div>
-
-    <div class="insight" id="insight"></div>
-
-    <div class="compare" id="compare"></div>
+    <div class="drift-chart">
+      <div class="dc-title">Ratio drift over time</div>
+      <canvas id="chart-cvs" style="width:100%;height:120px"></canvas>
+    </div>
   </div>
 </div>
 
 <script>
-const state = { a0: 3, b0: 30, span: 40 };
+// ── STATE ─────────────────────────────────────────────────────────────
+const state = { a0:3, b0:30, years:0 };
 
-['a0','b0','span'].forEach(k => {
-  document.getElementById(k).addEventListener('input', e => {
-    state[k] = +e.target.value;
-    if(k === 'b0' && state.b0 <= state.a0) { state.b0 = state.a0 + 1; document.getElementById('b0').value = state.b0; }
-    render();
-  });
-});
-
+// ── HELPERS ───────────────────────────────────────────────────────────
 function gcd(a,b){ a=Math.abs(Math.round(a)); b=Math.abs(Math.round(b)); while(b){[a,b]=[b,a%b];} return a||1; }
 function simplify(a,b){ const g=gcd(a,b); return [a/g,b/g]; }
 function ratioStr(a,b){ const [sa,sb]=simplify(a,b); return `${sa} : ${sb}`; }
 
-function render(){
-  document.getElementById('a0-val').textContent = state.a0;
-  document.getElementById('b0-val').textContent = state.b0;
-  document.getElementById('span-val').textContent = state.span;
+// ── SNAPSHOT BUILDER ──────────────────────────────────────────────────
+function makeSnapshotHTML(yearOffset, a0, b0, isNow=false){
+  const a=a0+yearOffset, b=b0+yearOffset;
+  const gap=b0-a0;
+  const [sa,sb]=simplify(a,b);
+  const timeLabel = yearOffset===0 ? 'Now' : yearOffset===1 ? '1 year later' : `${yearOffset} years later`;
+  const nowBadge = isNow ? '<span class="snap-now-badge">YOU ARE HERE</span>' : '';
 
-  const { a0, b0, span } = state;
-  const gap = b0 - a0;
+  const blueSize = Math.max(28, Math.min(60, 24 + a));
+  const amberSize = Math.max(34, Math.min(72, 28 + b*0.7));
 
-  // Build data points: year 0..span
-  const pts = [];
-  for(let y=0; y<=span; y++){
-    const a = a0 + y, b = b0 + y;
-    const [sa,sb] = simplify(a,b);
-    pts.push({ y, a, b, sa, sb, ratio: a/b });
-  }
-
-  // SVG timeline: x = year, y = ratio value (a/b)
-  const W = 760, H = 220, padL = 50, padR = 20, padT = 20, padB = 40;
-  const plotW = W - padL - padR, plotH = H - padT - padB;
-
-  const minR = pts[pts.length-1].ratio * 0.95;
-  const maxR = pts[0].ratio * 1.05;
-  const xScale = y => padL + (y / span) * plotW;
-  const yScale = r => padT + plotH - ((r - minR) / (maxR - minR)) * plotH;
-
-  // Ratio curve
-  let path = pts.map((p,i) => `${i===0?'M':'L'}${xScale(p.y).toFixed(1)},${yScale(p.ratio).toFixed(1)}`).join(' ');
-
-  // Grid lines at a few notable ratios (initial, midpoint, final)
-  const gridRatios = [pts[0].ratio, pts[Math.floor(span/2)].ratio, pts[span].ratio];
-
-  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" style="max-width:100%">`;
-
-  // Grid
-  svg += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT+plotH}" stroke="var(--border)" stroke-width="1"/>`;
-  svg += `<line x1="${padL}" y1="${padT+plotH}" x2="${padL+plotW}" y2="${padT+plotH}" stroke="var(--border)" stroke-width="1"/>`;
-
-  // Year tick marks
-  const tickStep = span <= 20 ? 2 : span <= 40 ? 5 : 10;
-  for(let y=0; y<=span; y+=tickStep){
-    const x = xScale(y);
-    svg += `<line x1="${x}" y1="${padT+plotH}" x2="${x}" y2="${padT+plotH+5}" stroke="var(--text3)" stroke-width="1"/>`;
-    svg += `<text x="${x}" y="${padT+plotH+18}" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="var(--text3)">+${y}y</text>`;
-  }
-
-  // The curve
-  svg += `<path d="${path}" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linejoin="round"/>`;
-
-  // Dots at key points: now (y=0), y=9 (textbook example), final
-  const keyYears = [0, Math.min(9, span), span];
-  keyYears.forEach(y => {
-    const p = pts[y];
-    if(!p) return;
-    const cx = xScale(p.y), cy = yScale(p.ratio);
-    svg += `<circle cx="${cx}" cy="${cy}" r="6" fill="var(--blue)" stroke="var(--surface)" stroke-width="2"/>`;
-    const [sa,sb] = simplify(p.a,p.b);
-    const label = `${sa}:${sb}`;
-    const labelY = cy < padT + 30 ? cy + 22 : cy - 12;
-    svg += `<text x="${cx}" y="${labelY}" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" font-weight="700" fill="var(--blue)">${label}</text>`;
-    svg += `<text x="${cx}" y="${labelY + 14}" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="var(--text3)">${p.a}&amp;${p.b}</text>`;
-  });
-
-  // Axis labels
-  svg += `<text x="${padL + plotW/2}" y="${H-2}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="var(--text3)" font-weight="600">Years added to both ages</text>`;
-  svg += `<text x="12" y="${padT + plotH/2}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="var(--text3)" font-weight="600" transform="rotate(-90 12 ${padT+plotH/2})">Ratio A/B</text>`;
-
-  svg += `</svg>`;
-  document.getElementById('timeline').innerHTML = svg;
-
-  // Callout cells
-  const show = [0, Math.min(9,span), Math.round(span/2), span];
-  document.getElementById('callout').innerHTML = show.map(y => {
-    const p = pts[y];
-    if(!p) return '';
-    const [sa,sb] = simplify(p.a,p.b);
-    const isNow = y === 0;
-    return `<div class="callout-cell ${isNow?'now':''}">
-      <div class="cc-lbl">${y===0?'Now':'+'+y+' years'}</div>
-      <div class="cc-ages">${p.a} &amp; ${p.b}</div>
-      <div class="cc-ratio" style="color:${isNow?'var(--blue)':'var(--text)'}">${sa} : ${sb}</div>
-      <div class="cc-simple">gap = ${gap}</div>
+  return `
+    <div class="snap${isNow?' now':''}">
+      <div class="snap-year">${timeLabel} ${nowBadge}</div>
+      <div class="snap-people">
+        <div class="person">
+          <div class="person-avatar" style="width:${blueSize}px;height:${blueSize}px;background:rgba(32,74,136,.12);border-color:var(--blue);font-size:${Math.round(blueSize*0.5)}px">🧒</div>
+          <div class="person-name">Person A</div>
+          <div class="person-age" style="color:var(--blue)">${a}</div>
+        </div>
+        <div class="snap-arrow">⟶</div>
+        <div class="snap-ratio">
+          <div class="sr-label">Ratio</div>
+          <div class="sr-fraction">
+            <div>
+              <div class="sr-num" style="color:var(--blue);border-color:var(--blue)">${a}</div>
+            </div>
+            <div class="sr-colon">:</div>
+            <div>
+              <div class="sr-num" style="color:var(--amber);border-color:var(--amber)">${b}</div>
+            </div>
+          </div>
+          <div class="sr-simplified">= ${sa} : ${sb}</div>
+        </div>
+        <div class="snap-arrow">⟵</div>
+        <div class="person">
+          <div class="person-avatar" style="width:${amberSize}px;height:${amberSize}px;background:rgba(196,117,10,.12);border-color:var(--amber);font-size:${Math.round(amberSize*0.45)}px">👩</div>
+          <div class="person-name">Person B</div>
+          <div class="person-age" style="color:var(--amber)">${b}</div>
+        </div>
+      </div>
+      <div class="snap-gap-note">gap still = ${gap} years</div>
     </div>`;
-  }).join('');
-
-  // Insight
-  const [sa0,sb0] = simplify(a0,b0);
-  const pEnd = pts[span];
-  const [saE,sbE] = simplify(pEnd.a,pEnd.b);
-  document.getElementById('insight').innerHTML = `
-    The age gap stays <strong>fixed at ${gap} years</strong> forever. But the ratio starts at <strong>${sa0}:${sb0}</strong> and drifts to <strong>${saE}:${sbE}</strong> after ${span} years. Adding the same number to both terms shifts the ratio — it only becomes 1:1 at infinity (when both ages are huge relative to the gap). <strong>Ratios scale by multiplication, not addition.</strong>
-  `;
-
-  // Compare panel
-  const f2 = (a0*2), g2 = (b0*2);
-  const [sm2,sn2] = simplify(f2,g2);
-  const p9 = pts[Math.min(9,span)];
-  const [sa9,sb9] = simplify(p9.a,p9.b);
-  document.getElementById('compare').innerHTML = `
-    <div class="compare-cell good">
-      <div class="cmp-title">Multiplying — preserves ratio</div>
-      <div class="cmp-body">
-        Base: <strong>${a0} : ${b0}</strong> = ${sa0} : ${sb0}<br>
-        ×2 →  <strong>${f2} : ${g2}</strong> = ${sm2} : ${sn2}<br>
-        ×3 →  <strong>${a0*3} : ${b0*3}</strong> = ${sa0} : ${sb0}
-      </div>
-      <div class="cmp-verdict">Same simplified ratio every time ✓</div>
-    </div>
-    <div class="compare-cell bad">
-      <div class="cmp-title">Adding — changes ratio</div>
-      <div class="cmp-body">
-        Base: <strong>${a0} : ${b0}</strong> = ${sa0} : ${sb0}<br>
-        +9 →  <strong>${p9.a} : ${p9.b}</strong> = ${sa9} : ${sb9}<br>
-        +${span} → <strong>${pEnd.a} : ${pEnd.b}</strong> = ${saE} : ${sbE}
-      </div>
-      <div class="cmp-verdict">Different simplified ratio every time ✗</div>
-    </div>
-  `;
 }
 
-render();
+// ── RENDER SNAPSHOTS ──────────────────────────────────────────────────
+function renderSnapshots(){
+  const {a0,b0,years}=state;
+  const snap=document.getElementById('snapshots');
+
+  // Show a few key snapshots: year 0, midpoint, current year
+  const keyYears=[0];
+  if(years>0&&years<50) keyYears.push(years);
+  if(!keyYears.includes(years)&&years>0) keyYears.push(years);
+
+  // Always show 3 frames: start, now, +10
+  const frames=[0];
+  if(years>0) frames.push(years);
+  const extraFrames=[5,10,15,20,30].filter(y=>y!==years&&y>0&&y<=50);
+  if(frames.length<4) frames.push(...extraFrames.slice(0,4-frames.length));
+  frames.sort((a,b)=>a-b);
+
+  snap.innerHTML=frames.slice(0,4).map(y=>makeSnapshotHTML(y,a0,b0,y===years)).join('');
+}
+
+// ── COMPARE PANEL ─────────────────────────────────────────────────────
+function renderCompare(){
+  const {a0,b0,years}=state;
+  const gap=b0-a0;
+  const [sa0,sb0]=simplify(a0,b0);
+
+  // Adding: show at y=0, y=9, y=years
+  const showYears=[0,Math.min(9,years),years].filter((v,i,a)=>a.indexOf(v)===i);
+  document.getElementById('add-rows').innerHTML=showYears.map(y=>{
+    const a=a0+y,b=b0+y;
+    const [sa,sb]=simplify(a,b);
+    return `<div class="op-row">
+      <span class="or-input">${a0}:${b0} +${y}</span>
+      <span class="or-arrow">→</span>
+      <span class="or-result" style="color:var(--red)">${a}:${b} = ${sa}:${sb}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('add-verdict').textContent=`Ratio started ${sa0}:${sb0} — now ${ratioStr(a0+years,b0+years)} ✗`;
+
+  // Multiplying: show ×1, ×2, ×3
+  const muls=[1,2,3];
+  document.getElementById('mul-rows').innerHTML=muls.map(k=>{
+    const a=a0*k,b=b0*k;
+    const [sa,sb]=simplify(a,b);
+    return `<div class="op-row">
+      <span class="or-input">${a0}:${b0} ×${k}</span>
+      <span class="or-arrow">→</span>
+      <span class="or-result" style="color:var(--green)">${a}:${b} = ${sa}:${sb}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('mul-verdict').textContent=`Always ${sa0}:${sb0} — unchanged ✓`;
+
+  document.getElementById('principle-example').textContent=
+    `${a0}:${b0} after +${years} yrs → ${ratioStr(a0+years,b0+years)} ≠ ${sa0}:${sb0}\n`+
+    `But ${a0}:${b0} × 5 → ${a0*5}:${b0*5} = ${sa0}:${sb0} still`;
+}
+
+// ── GAP & INSIGHT ─────────────────────────────────────────────────────
+function renderInsight(){
+  const {a0,b0,years}=state;
+  const gap=b0-a0;
+  const aY=a0+years, bY=b0+years;
+  const [sa0,sb0]=simplify(a0,b0);
+  const [saY,sbY]=simplify(aY,bY);
+  document.getElementById('gap-val').textContent=gap;
+  document.getElementById('insight-left').innerHTML=
+    `The gap of <strong>${gap} years</strong> never changes. But ${a0} grows to ${aY} and ${b0} grows to ${bY}.<br><br>`+
+    `The ratio <strong>${sa0}:${sb0}</strong> drifts to <strong>${saY}:${sbY}</strong> over ${years} years — `+
+    `because ${a0} changed <em>proportionally more</em> than ${b0} did.`;
+}
+
+// ── CHART ─────────────────────────────────────────────────────────────
+function renderChart(){
+  const {a0,b0,years}=state;
+  const cvs=document.getElementById('chart-cvs');
+  const wrap=cvs.parentElement;
+  const W=wrap.clientWidth-28, H=120;
+  const PR=Math.min(devicePixelRatio||1,2);
+  cvs.width=W*PR; cvs.height=H*PR;
+  cvs.style.width=W+'px'; cvs.style.height=H+'px';
+  const ctx=cvs.getContext('2d');
+  ctx.resetTransform(); ctx.scale(PR,PR);
+  ctx.fillStyle='#fdf8f0'; ctx.fillRect(0,0,W,H);
+
+  const maxY=50;
+  const pts=[];
+  for(let y=0;y<=maxY;y++) pts.push({y,r:(a0+y)/(b0+y)});
+
+  const padL=30,padR=10,padT=10,padB=25;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const minR=pts[maxY].r*0.9, maxR=pts[0].r*1.1;
+  const xS=y=>padL+y/maxY*plotW;
+  const yS=r=>padT+plotH-(r-minR)/(maxR-minR)*plotH;
+
+  // Grid
+  ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=.5;
+  ctx.beginPath();ctx.moveTo(padL,padT);ctx.lineTo(padL,padT+plotH);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(padL,padT+plotH);ctx.lineTo(padL+plotW,padT+plotH);ctx.stroke();
+
+  // Curve
+  ctx.strokeStyle=A='#c4750a';ctx.lineWidth=2.5;
+  ctx.beginPath();
+  pts.forEach((p,i)=>i===0?ctx.moveTo(xS(p.y),yS(p.r)):ctx.lineTo(xS(p.y),yS(p.r)));
+  ctx.stroke();
+
+  // Current year marker
+  const cur=pts[Math.min(years,maxY)];
+  if(cur){
+    const cx=xS(cur.y), cy=yS(cur.r);
+    ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);
+    ctx.fillStyle='#c4750a';ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  }
+
+  // Axis labels
+  ctx.font='10px DM Mono,monospace';ctx.fillStyle='#9a9080';
+  ctx.textAlign='center';ctx.textBaseline='top';
+  [0,10,20,30,40,50].forEach(y=>ctx.fillText('+'+y,xS(y),padT+plotH+4));
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('ratio',padL+2,padT+plotH/2);
+
+  // "Approaching 1:1" label
+  ctx.textAlign='right';ctx.fillStyle='rgba(196,117,10,.5)';
+  ctx.fillText('→ 1:1 at ∞',padL+plotW,padT+plotH-4);
+}
+
+// ── FULL RENDER ───────────────────────────────────────────────────────
+function renderAll(){
+  const {a0,b0}=state;
+  document.getElementById('a0v').textContent=a0;
+  document.getElementById('b0v').textContent=b0;
+  document.getElementById('year-val').textContent=state.years===0?'Now':`+${state.years} yrs`;
+  renderSnapshots();
+  renderCompare();
+  renderInsight();
+  renderChart();
+}
+
+// ── EVENTS ────────────────────────────────────────────────────────────
+document.getElementById('a0').addEventListener('input',e=>{
+  state.a0=+e.target.value;
+  if(state.b0<=state.a0){state.b0=state.a0+1;document.getElementById('b0').value=state.b0;}
+  renderAll();
+});
+document.getElementById('b0').addEventListener('input',e=>{
+  state.b0=+e.target.value;
+  if(state.b0<=state.a0){state.b0=state.a0+1;document.getElementById('b0').value=state.b0;}
+  renderAll();
+});
+document.getElementById('years').addEventListener('input',e=>{
+  state.years=+e.target.value;
+  renderAll();
+});
+
+window.addEventListener('resize',renderChart);
+
+// ── INIT ──────────────────────────────────────────────────────────────
+renderAll();
 </script>
 </body>
 </html>
